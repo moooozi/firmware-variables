@@ -62,3 +62,25 @@ def set_parsed_boot_entry(entry_id, load_option):
     :param load_option: LoadOption instance
     """
     set_boot_entry(entry_id, load_option.to_bytes())
+
+
+def get_boot_next():
+    """
+    Get the BootNext UEFI variable
+    :return: entry id or None if not set
+    """
+    verify_uefi_firmware()
+    try:
+        raw, _ = get_variable("BootNext")
+        return struct.unpack("<h", raw)[0]
+    except Exception:
+        return None
+
+def set_boot_next(entry_id):
+    """
+    Set the BootNext UEFI variable
+    :param entry_id: entry id to set as BootNext
+    """
+    verify_uefi_firmware()
+    raw = struct.pack("<h", entry_id)
+    set_variable("BootNext", raw)
