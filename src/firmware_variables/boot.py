@@ -21,7 +21,7 @@ def set_boot_order(entry_ids):
     :param entry_ids: list of entry ids
     """
     verify_uefi_firmware()
-    raw = b''.join(struct.pack("<h", entry_id) for entry_id in entry_ids)
+    raw = b"".join(struct.pack("<h", entry_id) for entry_id in entry_ids)
     set_variable("BootOrder", raw)
 
 
@@ -75,6 +75,7 @@ def get_boot_next():
         return struct.unpack("<h", raw)[0]
     except Exception:
         return None
+
 
 def set_boot_next(entry_id):
     """

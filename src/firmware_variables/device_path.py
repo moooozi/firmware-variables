@@ -115,7 +115,7 @@ class DevicePath:
     This class represents an EFI_DEVICE_PATH
     """
 
-    def __init__(self, path_type, subtype, data=b''):
+    def __init__(self, path_type, subtype, data=b""):
         self.path_type = DevicePathType(path_type)
         self.subtype = SUBTYPES_MAPPING[self.path_type](subtype)
         self.data = data
@@ -125,11 +125,11 @@ class DevicePath:
 
     def is_hard_drive(self) -> bool:
         return (
-            self.path_type == DevicePathType.MEDIA_DEVICE_PATH and
-            self.subtype == MediaDevicePathSubtype.HARD_DRIVE
+            self.path_type == DevicePathType.MEDIA_DEVICE_PATH
+            and self.subtype == MediaDevicePathSubtype.HARD_DRIVE
         )
 
-    def get_hard_drive_node(self) -> 'HardDriveNode | None':
+    def get_hard_drive_node(self) -> "HardDriveNode | None":
         """
         Returns a HardDriveNode instance if this node is a HARD_DRIVE node, else None.
         """
@@ -138,9 +138,9 @@ class DevicePath:
         data = self.data
         if len(data) < 38:
             return None
-        partition_number = int.from_bytes(data[0:4], 'little')
-        partition_start = int.from_bytes(data[4:12], 'little')
-        partition_size = int.from_bytes(data[12:20], 'little')
+        partition_number = int.from_bytes(data[0:4], "little")
+        partition_start = int.from_bytes(data[4:12], "little")
+        partition_size = int.from_bytes(data[12:20], "little")
         signature = data[20:36]
         partition_format = data[36]
         signature_type = data[37]
@@ -157,26 +157,26 @@ class DevicePath:
             signature_type=signature_type,
         )
 
-    def set_hard_drive_node(self, node: 'HardDriveNode') -> bool:
+    def set_hard_drive_node(self, node: "HardDriveNode") -> bool:
         """
         Sets the fields of the HARD_DRIVE device path node from a HardDriveNode instance.
         """
         if not self.is_hard_drive():
             return False
         data = (
-            node.partition_number.to_bytes(4, 'little') +
-            node.partition_start_lba.to_bytes(8, 'little') +
-            node.partition_size_lba.to_bytes(8, 'little') +
-            node.partition_signature +
-            bytes([node.partition_format, node.signature_type])
+            node.partition_number.to_bytes(4, "little")
+            + node.partition_start_lba.to_bytes(8, "little")
+            + node.partition_size_lba.to_bytes(8, "little")
+            + node.partition_signature
+            + bytes([node.partition_format, node.signature_type])
         )
         self.data = data
         return True
 
     def is_file_path(self) -> bool:
         return (
-            self.path_type == DevicePathType.MEDIA_DEVICE_PATH and
-            self.subtype == MediaDevicePathSubtype.FILE_PATH
+            self.path_type == DevicePathType.MEDIA_DEVICE_PATH
+            and self.subtype == MediaDevicePathSubtype.FILE_PATH
         )
 
     def get_file_path(self) -> Optional[str]:
@@ -206,7 +206,7 @@ class DevicePathList:
         self.paths: list[DevicePath] = []
 
     @staticmethod
-    def from_bytes(raw: bytes) -> 'DevicePathList':
+    def from_bytes(raw: bytes) -> "DevicePathList":
         device_path_list = DevicePathList()
 
         offset = 0
@@ -215,7 +215,7 @@ class DevicePathList:
             path_type, subtype, length = header
 
             # Append the device path node
-            data = raw[offset + EFI_DEVICE_PATH.size:offset + length]
+            data = raw[offset + EFI_DEVICE_PATH.size : offset + length]
             device_path_list.paths.append(DevicePath(path_type, subtype, data))
 
             offset += length
@@ -223,12 +223,13 @@ class DevicePathList:
         return device_path_list
 
     def to_bytes(self) -> bytes:
-        raw = b''
+        raw = b""
         for path in self.paths:
             raw += EFI_DEVICE_PATH.pack(
                 path.path_type.value,
                 path.subtype.value,
-                EFI_DEVICE_PATH.size + len(path.data))
+                EFI_DEVICE_PATH.size + len(path.data),
+            )
             raw += path.data
         return raw
 

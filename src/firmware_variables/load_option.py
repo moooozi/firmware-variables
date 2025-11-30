@@ -24,7 +24,7 @@ class LoadOption:
         self.attributes = 0
         self.description = ""
         self.file_path_list = DevicePathList()
-        self.optional_data = b''
+        self.optional_data = b""
 
     @staticmethod
     def from_bytes(raw):
@@ -34,7 +34,7 @@ class LoadOption:
         :return: LoadOption
         """
         # Decode load option header
-        header = EFI_LOAD_OPTION.unpack(raw[:EFI_LOAD_OPTION.size])
+        header = EFI_LOAD_OPTION.unpack(raw[: EFI_LOAD_OPTION.size])
         attributes, file_path_list_length = header
 
         load_option = LoadOption()
@@ -43,16 +43,18 @@ class LoadOption:
         load_option.attributes = LoadOptionAttributes(attributes)
 
         # Decode description
-        load_option.description = utf16_string_from_bytes(raw[EFI_LOAD_OPTION.size:])
+        load_option.description = utf16_string_from_bytes(raw[EFI_LOAD_OPTION.size :])
 
         # Decode file path list
         str_size = (len(load_option.description) + 1) * 2
         file_path_list_offset = EFI_LOAD_OPTION.size + str_size
-        file_path_list = raw[file_path_list_offset:file_path_list_offset + file_path_list_length]
+        file_path_list = raw[
+            file_path_list_offset : file_path_list_offset + file_path_list_length
+        ]
         load_option.file_path_list = DevicePathList.from_bytes(file_path_list)
 
         # Decode optional data
-        load_option.optional_data = raw[file_path_list_offset + file_path_list_length:]
+        load_option.optional_data = raw[file_path_list_offset + file_path_list_length :]
 
         return load_option
 
@@ -74,4 +76,6 @@ class LoadOption:
         return raw
 
     def __repr__(self):
-        return "<{} {} [{}]>".format(self.description, self.file_path_list, str(self.attributes))
+        return "<{} {} [{}]>".format(
+            self.description, self.file_path_list, str(self.attributes)
+        )

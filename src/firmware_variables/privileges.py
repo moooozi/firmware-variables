@@ -25,8 +25,7 @@ def patch_current_process_privileges():
     """
     process = win32process.GetCurrentProcess()
     token = win32security.OpenProcessToken(
-        process,
-        win32security.TOKEN_ADJUST_PRIVILEGES | win32security.TOKEN_QUERY
+        process, win32security.TOKEN_ADJUST_PRIVILEGES | win32security.TOKEN_QUERY
     )
     luid = win32security.LookupPrivilegeValue(None, win32con.SE_SYSTEM_ENVIRONMENT_NAME)
     privilege_enable = [(luid, win32security.SE_PRIVILEGE_ENABLED)]

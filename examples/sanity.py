@@ -1,4 +1,9 @@
-from firmware_variables import adjust_privileges, get_boot_order, get_boot_entry, LoadOption
+from firmware_variables import (
+    adjust_privileges,
+    get_boot_order,
+    get_boot_entry,
+    LoadOption,
+)
 
 
 def doit():
